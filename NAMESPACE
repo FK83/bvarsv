@@ -1,0 +1,5 @@
+useDynLib(bvarsv)
+import(RcppArmadillo)
+import(compiler)
+importFrom(Rcpp, evalCpp)
+export(bvar.sv.tvp, sim.var1.sv.tvp)

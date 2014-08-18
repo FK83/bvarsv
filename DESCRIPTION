@@ -1,0 +1,13 @@
+Package: bvarsv
+Type: Package
+Title: Bayesian Analysis of a Vector Autoregressive Model with Stochastic Volatility and Time-Varying Parameters
+Version: 1.0
+Date: 2014-08-14
+Author: Fabian Krueger
+Maintainer: Fabian Krueger <Fabian.Krueger83@gmail.com>
+Description: R/C++ implementation of the Primiceri (ReStud, 2005) model, with a
+    focus on generating posterior predictive distributions.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.11.0), RcppArmadillo (>= 0.4.000.4)
+LinkingTo: Rcpp, RcppArmadillo
+URL: https://sites.google.com/site/fk83research/code, https://github.com/FK83/bvarsv
