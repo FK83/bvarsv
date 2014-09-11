@@ -1,5 +1,4 @@
 useDynLib(bvarsv)
-import(RcppArmadillo)
-import(compiler)
+importFrom(compiler, cmpfun)
 importFrom(Rcpp, evalCpp)
-export(bvar.sv.tvp, sim.var1.sv.tvp)
+export(bvar.sv.tvp, sim.var1.sv.tvp, predictive.density, predictive.draws)

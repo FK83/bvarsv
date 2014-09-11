@@ -15,21 +15,20 @@ Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2014-08-14\cr
 License: \tab GPL (>= 2)\cr
-URL: https://sites.google.com/site/fk83research/code, https://github.com/FK83/bvarsv
+URL: \tab https://sites.google.com/site/fk83research/code\cr
 }
 
 }
 
 \author{
-Fabian Krueger <Fabian.Krueger83@gmail.com>
-Based on Matlab code by Dimitris Korobilis (see Koop and Korobilis, 2010) 
+Fabian Krueger <Fabian.Krueger83@gmail.com>, based on Matlab code by Dimitris Korobilis (see Koop and Korobilis, 2010).
 }
 \references{
-The code incorporates the recent corrigendum by Del Negro and Primiceri (2014), which points to an error in the original MCMC algorithm.
+\emph{The code incorporates the recent corrigendum by Del Negro and Primiceri (2014), which points to an error in the original MCMC algorithm of Primiceri (2005).}
 
 Del Negro, M. and G. Primiceri (2014): ``Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum'', working paper, Northwestern University. 
 
-Koop, G. and D. Korobilis (2010): ``Bayesian Multivariate Time Series Methods for Empirical Macroeconomics'', Foundations and Trends in Econometrics 3, 267-358.
+Koop, G. and D. Korobilis (2010): ``Bayesian Multivariate Time Series Methods for Empirical Macroeconomics'', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
 
 Primiceri, G. (2005): ``Time Varying Structural Vector Autoregressions and Monetary Policy'', Review of Economic Studies 72, 821-852.
 }
@@ -42,6 +41,7 @@ Primiceri, G. (2005): ``Time Varying Structural Vector Autoregressions and Monet
 data(usmacro)
 
 # Estimate trivariate model using Primiceri's prior choices (default settings)
+set.seed(5813)
 bv <- bvar.sv.tvp(usmacro)
 
 }

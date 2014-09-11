@@ -1,5 +1,3 @@
-library(compiler)
-
 ##################################################
 # VAR regressor matrix
 ##################################################
@@ -540,3 +538,33 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m[,,tsq], fc.vdraws = fc.v[,,tsq], fc.ydraws = fc.y[,,tsq]))
   
 })
+
+predictive.density <- function(fit, v = 1, h = 1, cdf = FALSE){
+  # Retrieve number of variables/horizons from fit
+  nv <- length(fit$fc.ydraws[, 1, 1])
+  nh <- length(fit$fc.ydraws[1, , 1])
+  # Input check
+  if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
+  # Locate variance elements in fc.vdraws
+  els <- 1
+  for (z in 2:nv) els <- c(els, els[length(els)] + nv - z + 2)
+  # Get means and standard deviations
+  m <- fit$fc.mdraws[v, h, ]
+  s <- sqrt(fit$fc.vdraws[els[v], h, ])
+  # Finally: Return forecast pdf/cdf
+  if (cdf == FALSE){
+    return(function(q) sapply(q, function(o) mean(dnorm(o, mean = m, sd = s))))
+  } else {
+    return(function(q) sapply(q, function(o) mean(pnorm(o, mean = m, sd = s))))
+  }
+}
+
+predictive.draws <- function(fit, v = 1, h = 1){
+  # Retrieve number of variables/horizons from fit
+  nv <- length(fit$fc.ydraws[, 1, 1])
+  nh <- length(fit$fc.ydraws[1, , 1])
+  # Input check
+  if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
+  # Return draws
+  return(fit$fc.ydraws[v, h, ])  
+}

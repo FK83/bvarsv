@@ -6,36 +6,6 @@
 
 using namespace Rcpp;
 
-// dnormC
-double dnormC(double x);
-RcppExport SEXP bvarsv_dnormC(SEXP xSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< double >::type x(xSEXP );
-        double __result = dnormC(x);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
-// pnormC
-double pnormC(double x);
-RcppExport SEXP bvarsv_pnormC(SEXP xSEXP) {
-BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< double >::type x(xSEXP );
-        double __result = pnormC(x);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
-END_RCPP
-}
 // mvndrawC
 arma::colvec mvndrawC(arma::colvec mu, arma::mat sig);
 RcppExport SEXP bvarsv_mvndrawC(SEXP muSEXP, SEXP sigSEXP) {

@@ -1,10 +1,10 @@
 \name{sim.var1.sv.tvp}
 \alias{sim.var1.sv.tvp}
 \title{
-Simulate from a VAR(1) with stochastic volatility and drifting parameters
+Simulate from a VAR(1) with Stochastic Volatility and Time-Varying Parameters
 }
 \description{
-Simulate from a first-order Vector Autoregressive model with stochastic volatility and time-varying parameters
+Simulate from a VAR(1) with Stochastic Volatility and Time-Varying Parameters
 }
 \usage{
 sim.var1.sv.tvp(B0 = NULL, A0 = NULL, Sig0 = NULL, Q = NULL, 
@@ -35,7 +35,7 @@ Fabian Krueger
 
 # Generate data from a model with moderate time variation in the parameters 
 # and error term variances
-set.seed(234)
+set.seed(5813)
 sim <- sim.var1.sv.tvp(Q = 1e-5*diag(6), S = 1e-5*diag(1), W = 1e-5*diag(2))
 # Plot both series
 matplot(sim$data, type = "l")

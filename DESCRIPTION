@@ -2,12 +2,11 @@ Package: bvarsv
 Type: Package
 Title: Bayesian Analysis of a Vector Autoregressive Model with Stochastic Volatility and Time-Varying Parameters
 Version: 1.0
-Date: 2014-08-14
+Date: 2014-08-22
 Author: Fabian Krueger
 Maintainer: Fabian Krueger <Fabian.Krueger83@gmail.com>
-Description: R/C++ implementation of the Primiceri (ReStud, 2005) model, with a
-    focus on generating posterior predictive distributions.
+Description: R/C++ implementation of the model proposed by Primiceri ("Time Varying Structural Vector Autoregressions and Monetary Policy", Review of Economic Studies, 2005), with a focus on generating posterior predictive distributions.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.0), RcppArmadillo (>= 0.4.000.4)
+Imports: Rcpp (>= 0.11.0)
 LinkingTo: Rcpp, RcppArmadillo
-URL: https://sites.google.com/site/fk83research/code, https://github.com/FK83/bvarsv
+URL: https://sites.google.com/site/fk83research/code
