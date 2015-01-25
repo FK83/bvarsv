@@ -539,18 +539,24 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   
 })
 
+# Helper function to revert vech operator (needed to spot variance elements from VCV matrix)
+vels <- function(n){
+  aux <- matrix(0, n, n)
+  aux[lower.tri(aux, diag = TRUE)] <- 1:(0.5*n*(n+1))
+  return(diag(aux)) 
+}
+
 predictive.density <- function(fit, v = 1, h = 1, cdf = FALSE){
   # Retrieve number of variables/horizons from fit
   nv <- length(fit$fc.ydraws[, 1, 1])
   nh <- length(fit$fc.ydraws[1, , 1])
   # Input check
   if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
-  # Locate variance elements in fc.vdraws
-  els <- 1
-  for (z in 2:nv) els <- c(els, els[length(els)] + nv - z + 2)
+  # Locate variance 
+  v.ind <- vels(nv)[v]
   # Get means and standard deviations
   m <- fit$fc.mdraws[v, h, ]
-  s <- sqrt(fit$fc.vdraws[els[v], h, ])
+  s <- sqrt(fit$fc.vdraws[v.ind, h, ])
   # Finally: Return forecast pdf/cdf
   if (cdf == FALSE){
     return(function(q) sapply(q, function(o) mean(dnorm(o, mean = m, sd = s))))
