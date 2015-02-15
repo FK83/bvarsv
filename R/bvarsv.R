@@ -362,8 +362,11 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   statedraw <- 5*matrix(1,t,M)
   Zs <- matrix(1,t,1) %x% diag(M)
   prw <- matrix(0,7,1)
-  fc.y <- fc.m <- array(0,c(M,nf,nrep))
-  fc.v <- array(0,c(M*(M+1)*0.5,nf,nrep))
+  nrep2 <- nrep/thinfac # number of saved draws
+  fc.y <- fc.m <- array(0,c(M,nf,nrep2))
+  fc.v <- array(0,c(M*(M+1)*0.5,nf,nrep2))
+  Bt_alldraws <- array(0, c(K,t,nrep2))
+  Ht_alldraws <- array(0, c(M,M*t,nrep2))  
   
   # Storage matrices for (running) posterior means
   
@@ -378,7 +381,7 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   cormean <- matrix(0,t,numa)
   sig2mo <- matrix(0,t,M)
   cor2mo <- matrix(0,t,numa)
-  
+    
   # Elements of mixture normal approximation to log chi2
   
   tmp <- getmix()
@@ -453,8 +456,11 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
     # Save post-burnin draws and forecasts
     ##############################################################################################################
     
-    if (irep > nburn){
+    if ( (irep > nburn) & ( (irep-nburn) %% thinfac == 0) ){
       
+	  # Counter for thinned post-burnin draws
+	  aux.ct <- (irep-nburn)/thinfac
+	  
       Bt_postmean <- Bt_postmean + Btdraw 
       At_postmean <- At_postmean + Atdraw 
       Sigt_postmean <- Sigt_postmean + Sigtdraw
@@ -481,9 +487,9 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
       # Forecasts (with parameter drift)
       
       tempfc <- getfcsts(lastcol(Btdraw), lastcol(Atdraw), lastcol(Sigtdraw), Qdraw, Sdraw, Wdraw, t(y), nf, p)   
-	  fc.m[,,irep-nburn] <- tempfc$mean
-	  fc.v[,,irep-nburn] <- tempfc$variance
-	  fc.y[,,irep-nburn] <- tempfc$draw
+	  fc.m[,,aux.ct] <- tempfc$mean
+	  fc.v[,,aux.ct] <- tempfc$variance
+	  fc.y[,,aux.ct] <- tempfc$draw
       
 	  } else {
 	  
@@ -496,28 +502,33 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 
       for (hhh in 1:nf){
         auxl <- varfcst(parmat, tmpvar, fcdat, hhh)
-        fc.m[,hhh,irep-nburn] <- auxl$mean
-        fc.v[,hhh,irep-nburn] <- vechC(auxl$variance)
-		fc.y[,hhh,irep-nburn] <- mvndrawC(auxl$mean, auxl$variance)
+        fc.m[,hhh,aux.ct] <- auxl$mean
+        fc.v[,hhh,aux.ct] <- vechC(auxl$variance)
+		fc.y[,hhh,aux.ct] <- mvndrawC(auxl$mean, auxl$variance)
       }      
 	  
 	  }
-      
+     
+	  # Save parameter draws
+	
+    Bt_alldraws[,,aux.ct] <- Btdraw
+    Ht_alldraws[,,aux.ct] <- Ht	
+	
     }
     
   }
   
   # Final steps
   
-  Bt_postmean <- Bt_postmean / nrep
-  At_postmean <- At_postmean / nrep
-  Sigt_postmean <- Sigt_postmean / nrep
-  Ht_postmean <- Ht_postmean / nrep
-  Qmean <- Qmean / nrep
-  Smean <- Smean / nrep
-  Wmean <- Wmean / nrep
-  sigmean <- sigmean / nrep
-  cormean <- cormean / nrep
+  Bt_postmean <- Bt_postmean / nrep2
+  At_postmean <- At_postmean / nrep2
+  Sigt_postmean <- Sigt_postmean / nrep2
+  Ht_postmean <- Ht_postmean / nrep2
+  Qmean <- Qmean / nrep2
+  Smean <- Smean / nrep2
+  Wmean <- Wmean / nrep2
+  sigmean <- sigmean / nrep2
+  cormean <- cormean / nrep2
   
   # Prepare outputs
   
@@ -528,14 +539,14 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 	beta.out[,,jj] <- beta.reshape(Bt_postmean[,jj], M, p)
 	h.out[,,jj] <- Ht_postmean[((jj-1)*M+1):(jj*M),]
   }  
-  
-  # Thinning sequence for MCMC draws
-  
-  tsq <- round(seq(from = 0, by = thinfac, to = nrep))[-1]
-  
+    
   # Return list of outputs
   
-  return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m[,,tsq], fc.vdraws = fc.v[,,tsq], fc.ydraws = fc.y[,,tsq]))
+  outlist <- list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, 
+                  W.postmean = Wmean, fc.mdraws = fc.m, fc.vdraws = fc.v, fc.ydraws = fc.y,
+                  Beta.all = Bt_alldraws, H.all = Ht_alldraws)
+    
+  return(outlist)
   
 })
 
