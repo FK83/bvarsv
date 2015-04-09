@@ -46,22 +46,6 @@ return(auxa)
 })
 
 ##################################################
-# One more..
-##################################################
-revvech <- cmpfun(function(x){
-p <- (sqrt(1 + 8 * length(x)) - 1)/2
-if (p != round(p)) stop(" revvech: Input vector not of vech format ")
-out <- matrix(0,p,p)
-ct <- 1
-for (jj in 1:p){
-	out[jj:p,jj] <- x[ct:(ct+p-jj)]
-	ct <- ct + p + 1 - jj
-}
-out[upper.tri(out)] <- out[lower.tri(out)]
-return(out)
-})
-
-##################################################
 # Regressor matrix for forecasting
 ##################################################
 makeregs.fc <- cmpfun(function(dat,p){
@@ -265,7 +249,7 @@ getmix <- cmpfun(function(){
 ##################################################
 # Estimate Primiceri BVAR with SV and TVP 
 ##################################################
-bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep = 50000, nburn = 5000, thinfac = 10, itprint = 10000, k_B = 4, k_A = 4, k_sig = 1, k_Q = 0.01, k_S = 0.1, k_W = 0.01, pQ = NULL, pW = NULL, pS = NULL){
+bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep = 50000, nburn = 5000, thinfac = 10, itprint = 10000, save.parameters = FALSE, k_B = 4, k_A = 4, k_sig = 1, k_Q = 0.01, k_S = 0.1, k_W = 0.01, pQ = NULL, pW = NULL, pS = NULL){
 
   # Input checks
 
@@ -362,8 +346,18 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   statedraw <- 5*matrix(1,t,M)
   Zs <- matrix(1,t,1) %x% diag(M)
   prw <- matrix(0,7,1)
-  fc.y <- fc.m <- array(0,c(M,nf,nrep))
-  fc.v <- array(0,c(M*(M+1)*0.5,nf,nrep))
+  # new stuff (March 29, 2015)
+  nrep2 <- nrep/thinfac # effective number of draws
+  # re-design forecast output (save only thinned draws)
+  fc.y <- fc.m <- array(0,c(M,nf,nrep2))
+  fc.v <- array(0,c(M*(M+1)*0.5,nf,nrep2))  
+  if (save.parameters == TRUE){
+    # arrays for parameter draws
+    Bt.alldraws <- array(0, c(K,t,nrep2))
+    Ht.alldraws <- array(0, c(M,M*t,nrep2))
+  } else {
+    Bt.alldraws <- Ht.alldraws <- NULL
+  }
   
   # Storage matrices for (running) posterior means
   
@@ -390,6 +384,9 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   
   prints <- seq(from=0,to=(nrep+nburn),by=itprint)
   print(paste(Sys.time(),"-- now starting MCMC"))
+  
+  # auxiliary counter for saved draws
+  aux.ct <- 0
   
   for (irep in 1:(nrep+nburn)){
     
@@ -453,7 +450,8 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
     # Save post-burnin draws and forecasts
     ##############################################################################################################
     
-    if (irep > nburn){
+    if ( (irep > nburn) & ( (irep-nburn) %% thinfac == 0) ){
+	  aux.ct <- aux.ct + 1 # counter for saved draws
       
       Bt_postmean <- Bt_postmean + Btdraw 
       At_postmean <- At_postmean + Atdraw 
@@ -481,9 +479,9 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
       # Forecasts (with parameter drift)
       
       tempfc <- getfcsts(lastcol(Btdraw), lastcol(Atdraw), lastcol(Sigtdraw), Qdraw, Sdraw, Wdraw, t(y), nf, p)   
-	  fc.m[,,irep-nburn] <- tempfc$mean
-	  fc.v[,,irep-nburn] <- tempfc$variance
-	  fc.y[,,irep-nburn] <- tempfc$draw
+	  fc.m[,,aux.ct] <- tempfc$mean
+	  fc.v[,,aux.ct] <- tempfc$variance
+	  fc.y[,,aux.ct] <- tempfc$draw
       
 	  } else {
 	  
@@ -496,10 +494,19 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 
       for (hhh in 1:nf){
         auxl <- varfcst(parmat, tmpvar, fcdat, hhh)
-        fc.m[,hhh,irep-nburn] <- auxl$mean
-        fc.v[,hhh,irep-nburn] <- vechC(auxl$variance)
-		fc.y[,hhh,irep-nburn] <- mvndrawC(auxl$mean, auxl$variance)
+        fc.m[,hhh,aux.ct] <- auxl$mean
+        fc.v[,hhh,aux.ct] <- vechC(auxl$variance)
+		fc.y[,hhh,aux.ct] <- mvndrawC(auxl$mean, auxl$variance)
       }      
+	  
+	  }
+	  
+	  # Save parameter draws
+	
+	  if (save.parameters == TRUE){
+	
+	    Bt.alldraws[,,aux.ct] <- Btdraw
+		Ht.alldraws[,,aux.ct] <- t(Ht)
 	  
 	  }
       
@@ -509,15 +516,15 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   
   # Final steps
   
-  Bt_postmean <- Bt_postmean / nrep
-  At_postmean <- At_postmean / nrep
-  Sigt_postmean <- Sigt_postmean / nrep
-  Ht_postmean <- Ht_postmean / nrep
-  Qmean <- Qmean / nrep
-  Smean <- Smean / nrep
-  Wmean <- Wmean / nrep
-  sigmean <- sigmean / nrep
-  cormean <- cormean / nrep
+  Bt_postmean <- Bt_postmean / nrep2
+  At_postmean <- At_postmean / nrep2
+  Sigt_postmean <- Sigt_postmean / nrep2
+  Ht_postmean <- Ht_postmean / nrep2
+  Qmean <- Qmean / nrep2
+  Smean <- Smean / nrep2
+  Wmean <- Wmean / nrep2
+  sigmean <- sigmean / nrep2
+  cormean <- cormean / nrep2
   
   # Prepare outputs
   
@@ -529,37 +536,39 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 	h.out[,,jj] <- Ht_postmean[((jj-1)*M+1):(jj*M),]
   }  
   
-  # Thinning sequence for MCMC draws
-  
-  tsq <- round(seq(from = 0, by = thinfac, to = nrep))[-1]
-  
   # Return list of outputs
   
-  return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m[,,tsq], fc.vdraws = fc.v[,,tsq], fc.ydraws = fc.y[,,tsq]))
+  return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m, fc.vdraws = fc.v, fc.ydraws = fc.y, Beta.draws = Bt.alldraws, H.draws = Ht.alldraws, M = M, p = p))
   
 })
 
-predictive.density <- function(fit, v = 1, h = 1, cdf = FALSE){
+# Helper function to revert vech operator (needed to spot variance elements from VCV matrix)
+vels <- cmpfun(function(n){
+  aux <- matrix(0, n, n)
+  aux[lower.tri(aux, diag = TRUE)] <- 1:(0.5*n*(n+1))
+  return(diag(aux)) 
+})
+
+predictive.density <- cmpfun(function(fit, v = 1, h = 1, cdf = FALSE){
   # Retrieve number of variables/horizons from fit
   nv <- length(fit$fc.ydraws[, 1, 1])
   nh <- length(fit$fc.ydraws[1, , 1])
   # Input check
   if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
-  # Locate variance elements in fc.vdraws
-  els <- 1
-  for (z in 2:nv) els <- c(els, els[length(els)] + nv - z + 2)
+  # Locate variance 
+  v.ind <- vels(nv)[v]
   # Get means and standard deviations
   m <- fit$fc.mdraws[v, h, ]
-  s <- sqrt(fit$fc.vdraws[els[v], h, ])
+  s <- sqrt(fit$fc.vdraws[v.ind, h, ])
   # Finally: Return forecast pdf/cdf
   if (cdf == FALSE){
     return(function(q) sapply(q, function(o) mean(dnorm(o, mean = m, sd = s))))
   } else {
     return(function(q) sapply(q, function(o) mean(pnorm(o, mean = m, sd = s))))
   }
-}
+})
 
-predictive.draws <- function(fit, v = 1, h = 1){
+predictive.draws <- cmpfun(function(fit, v = 1, h = 1){
   # Retrieve number of variables/horizons from fit
   nv <- length(fit$fc.ydraws[, 1, 1])
   nh <- length(fit$fc.ydraws[1, , 1])
@@ -567,4 +576,102 @@ predictive.draws <- function(fit, v = 1, h = 1){
   if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
   # Return draws
   return(fit$fc.ydraws[v, h, ])  
-}
+})
+
+ARtoMA <- cmpfun(function(A, nhor){
+  # Infer dimensions from A parameters
+  M <- nrow(A)
+  p <- ncol(A)/M
+  Phi <- matrix(0, M, M*nhor) 
+  # See recursive formula in JMulti document, p.28 [find Lütkepohl ref!]
+  for (s in 1:nhor){
+    tmp <- matrix(0, M, M)
+	for (j in 1:s){
+	  if (s == j){
+	    aux <- diag(M)
+	  } else {
+	    aux <- Phi[, ((s-j-1)*M+1):((s-j)*M)]
+	  }
+	  if (j <= p) tmp <- tmp + aux %*% A[,((j-1)*M+1):(j*M)]
+	}
+	Phi[,((s-1)*M+1):(s*M)] <- tmp
+  }  
+  Phi  
+})
+
+matmult <- cmpfun(function(mat, mult){
+  if (mult == 0){
+    out <- diag(nrow(mat))
+  } else if (mult == 1){
+    out <- mat
+  } else {
+    out <- mat
+    for (c in 1:(mult-1)) out <- out %*% mat    
+  }
+  return(out)
+})
+
+IRFmats <- cmpfun(function(A, H, nhor, orthogonal = TRUE){
+  # Dimensions
+  M <- nrow(A) # nr of variables
+  
+  # AR matrices
+  p <- ncol(A)/M
+  
+  # Cholesky of H
+  cH <- t(chol(H))
+    
+  # Construct companion form matrices
+  
+  if (p > 1){
+      
+    # VAR matrices
+    Ac <- matrix(0, M*p, M*p)
+    Ac[1:M, ] <- A
+    Ac[-(1:M), 1:(M*(p-1))] <- diag(M*(p-1))
+    
+  } else {
+  
+    Ac <- A
+  
+  }
+  
+  # Matrix with impulse responses
+  Phi <- matrix(0, M, M*(nhor+1)) 
+  for (s in 0:nhor){
+    aux <- matmult(Ac, s)[1:M, 1:M] 
+	if (orthogonal == TRUE) aux <- aux %*% cH
+	Phi[,(s*M+1):((s+1)*M)] <- aux
+  } 
+  Phi
+  
+})
+
+impulse.responses <- cmpfun(function(fit, impulse.variable = 1, response.variable = 2, t = NULL, nhor = 20, orthogonal = TRUE, draw.plot = TRUE){
+  # Get coefficient draws from fit
+  Beta.draws <- fit$Beta.draws
+  H.draws <- fit$H.draws
+  nd <- dim(Beta.draws)[3]
+  if (is.null(t)) t <- dim(Beta.draws)[2]
+  out <- matrix(0, nd, nhor + 1)
+  M <- fit$M
+  p <- fit$p
+  for (j in 1:nd){
+	aux <- IRFmats(A = beta.reshape(Beta.draws[,t,j], M, p)[,-1], H = H.draws[,((t-1)*M+1):(t*M),j], nhor = nhor, orthogonal = orthogonal)
+	out[j,] <- aux[response.variable, seq(from = impulse.variable, by = M, length = nhor + 1)]  	 
+  }
+  # Make plot
+  if (draw.plot){
+    pdat <- t(apply(out[,-1], 2, function(z) quantile(z, c(0.05, 0.25, 0.5, 0.75, 0.95))))
+    xax <- 1:nhor
+	matplot(x = xax, y = pdat, type = "n", ylab = "", xlab = "Horizon", bty = "n", xlim = c(1, nhor))
+	polygon(c(xax, rev(xax)), c(pdat[,5], rev(pdat[,4])), col = "grey60", border = NA)
+	polygon(c(xax, rev(xax)), c(pdat[,4], rev(pdat[,3])), col = "grey30", border = NA)
+	polygon(c(xax, rev(xax)), c(pdat[,3], rev(pdat[,2])), col = "grey30", border = NA)
+	polygon(c(xax, rev(xax)), c(pdat[,2], rev(pdat[,1])), col = "grey60", border = NA)
+	lines(x = xax, y = pdat[,3], type = "l", col = 1, lwd = 2.5)
+	abline(h = 0, lty = 2)
+  }
+  list(contemporaneous = out[,1], irf = out[,-1])  
+})
+  
