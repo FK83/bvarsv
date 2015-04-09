@@ -543,7 +543,6 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 })
 
 # Helper function to revert vech operator (needed to spot variance elements from VCV matrix)
-<<<<<<< HEAD
 vels <- cmpfun(function(n){
   aux <- matrix(0, n, n)
   aux[lower.tri(aux, diag = TRUE)] <- 1:(0.5*n*(n+1))
@@ -551,15 +550,6 @@ vels <- cmpfun(function(n){
 })
 
 predictive.density <- cmpfun(function(fit, v = 1, h = 1, cdf = FALSE){
-=======
-vels <- function(n){
-  aux <- matrix(0, n, n)
-  aux[lower.tri(aux, diag = TRUE)] <- 1:(0.5*n*(n+1))
-  return(diag(aux)) 
-}
-
-predictive.density <- function(fit, v = 1, h = 1, cdf = FALSE){
->>>>>>> origin/master
   # Retrieve number of variables/horizons from fit
   nv <- length(fit$fc.ydraws[, 1, 1])
   nh <- length(fit$fc.ydraws[1, , 1])
