@@ -20,7 +20,10 @@ predictive.draws(fit, v = 1, h = 1)
 \value{
  \code{\link{predictive.density}} returns a function \code{f(z)}, which yields the value(s) of the predictive density at point(s) \code{z}. This function exploits conditional normality of the model, given the posterior draws of the parameters.
  
-\code{\link{predictive.draws}} returns a vector of MCMC draws.
+\code{\link{predictive.draws}} returns a list containing vectors of MCMC draws, more specifically:
+\item{y}{Draws from the predictand itself}
+\item{m}{Mean of the normal distribution for the predictand in each draw}
+\item{v}{Variance of the normal distribution for the predictand in each draw}
  
 Both outputs should be closely in line with each other (apart from a small amount of sampling noise), see the link below for details.
 }

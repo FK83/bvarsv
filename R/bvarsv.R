@@ -574,8 +574,14 @@ predictive.draws <- cmpfun(function(fit, v = 1, h = 1){
   nh <- length(fit$fc.ydraws[1, , 1])
   # Input check
   if (v > nv | h > nh | v != round(v) | h != round(h))  stop("Please choose appropriate variable and horizon indices")
-  # Return draws
-  return(fit$fc.ydraws[v, h, ])  
+  # Draws for y
+  y <- fit$fc.ydraws[v, h, ]
+  # Draws for m
+  m <- fit$fc.mdraws[v, h, ]
+  # Draws for v
+  v <- fit$fc.vdraws[vels(nv)[v], h, ] 
+  # Return draws in list
+  return(list(y = y, m = m, v = v))  
 })
 
 ARtoMA <- cmpfun(function(A, nhor){
