@@ -1,7 +1,7 @@
 \name{impulse.responses}
 \alias{impulse.responses}
 \title{
-Compute Impulse Response Function from a fitted model 
+Compute Impulse Response Function from a Fitted Model 
 }
 \description{
 Computes impulse response functions (IRFs) from a model fit produced by \link{bvar.sv.tvp}. The
@@ -11,16 +11,18 @@ and \code{response.variable} below).
 }
 \usage{
 impulse.responses(fit, impulse.variable = 1, response.variable = 2, 
-                  t = NULL, nhor = 20, orthogonal = TRUE, draw.plot = TRUE)
+                  t = NULL, nhor = 20, scenario = 2, draw.plot = TRUE)
 }
 \arguments{
   \item{fit}{Model fit produced by \link{bvar.sv.tvp}, with the option \code{save.parameters} set to \code{TRUE}.}
   \item{impulse.variable}{Variable which experiences the shock.}
-  \item{response.variable}{Variable that (possibly) responds to the shock.}
+  \item{response.variable}{Variable which (possibly) responds to the shock.}
   \item{t}{Time point from which parameter matrices are to be taken. Defaults to most recent time point.}
   \item{nhor}{Maximal time between impulse and response (defaults to 20).}
-  \item{orthogonal}{If \code{TRUE} (the default), impulse responses refer to an orthogonalized shock. If \code{FALSE}, they
-  simply refer to a unit shock (see notes below).}
+  \item{scenario}{If \code{1}, there is no orthogonalizaton, and the shock size corresponds to one unit of the impulse variable. If \code{scenario} is either \code{2} (the default) or \code{3}, 
+  the error term variance-covariance matrix is orthogonalized via Cholesky decomposition. For \code{scenario = 2}, the Cholesky decomposition of the error term VCV matrix at time point \code{t} is used. 
+  \code{scenario = 3} is the variant used in Del Negro and Primiceri (2015). Here, the diagonal elements are set to their averages over time, whereas the off-diagonal elements are specific to time \code{t}. See the 
+  notes below for further information.}
   \item{draw.plot}{If \code{TRUE} (the default): Produces a plot showing the 5, 25, 50, 75 and 95 percent quantiles of the simulated impulse responses.}
 }
 \value{
@@ -31,7 +33,11 @@ List of two elements:
 }
 \references{
 Hamilton, J.D. (1994): Time Series Analysis, Princeton University Press.
+
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press. Supplementary material available at 
+\url{http://restud.oxfordjournals.org/content/early/2015/06/21/restud.rdv024/suppl/DC1} (accessed: 2015-10-29).
 }
+
 \author{
 Fabian Krueger
 }
@@ -48,11 +54,11 @@ impulse.responses(fit)
 }
 }
 \note{
-If \code{orthonal} is set to \code{TRUE}, the Cholesky transform (transpose of \link{chol}) is used to produce the orthogonal impulse responses. See Hamilton (1994), Section 11.4, and particularly Equation [11.4.22]. As discussed by Hamilton, the ordering of the system variables matters, and should be considered carefully. The magnitude of the shock (impulse) corresponds to one standard deviation.
+If \code{scenario} is set to either \code{2} or \code{3}, the Cholesky transform (transpose of \link{chol}) is used to produce the orthogonal impulse responses. See Hamilton (1994), Section 11.4, and particularly Equation [11.4.22]. As discussed by Hamilton, the ordering of the system variables matters, and should be considered carefully. The magnitude of the shock (impulse) corresponds to one standard deviation of the error term.
 
-If \code{orthonal} is set to \code{FALSE}, the function simply outputs the matrices of the model's moving average representation, see Equation [11.4.1] in 
+If \code{scenario = 1}, the function simply outputs the matrices of the model's moving average representation, see Equation [11.4.1] in 
 Hamilton (1994). The scenario considered here may be unrealistic, in that an isolated shock may be unlikely. The magnitude of the shock (impulse)
-corresponds to one unit.
+corresponds to one unit of the error term.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
