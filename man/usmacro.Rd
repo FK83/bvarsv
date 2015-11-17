@@ -25,6 +25,9 @@ Federal Reserve Bank of St. Louis (2015): `Federal Reserve Economic Data',
 \url{http://research.stlouisfed.org/fred2/}.
 Accessed: 2015-10-29.
 The two series have the identifiers `UNRATE' and `TB3MS'. For each quarter, we compute simple averages over three monthly observations. 
+
+Disclaimer: Please note that the providers of the original data cannot take responsibility for the data posted here, nor can they answer any questions about them. Users should consult their respective websites for the official and most recent version of the data.
+
 }
 
 \examples{
