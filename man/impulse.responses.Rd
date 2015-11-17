@@ -34,8 +34,8 @@ List of two elements:
 \references{
 Hamilton, J.D. (1994): Time Series Analysis, Princeton University Press.
 
-Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press. Supplementary material available at 
-\url{http://restud.oxfordjournals.org/content/early/2015/06/21/restud.rdv024/suppl/DC1} (accessed: 2015-10-29).
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies 82, 1342-1345. Supplementary material available at 
+\url{http://restud.oxfordjournals.org/content/82/4/1342/suppl/DC1} (accessed: 2015-11-17).
 }
 
 \author{

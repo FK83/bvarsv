@@ -36,7 +36,7 @@ pQ = NULL, pW = NULL, pS = NULL)
   These outputs are generated only if \code{save.parameters} has been set to \code{TRUE}. }
 }
 \references{
-Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press. 
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies 82, 1342-1345. 
 
 Koop, G. and D. Korobilis (2010): `Bayesian Multivariate Time Series Methods for Empirical Macroeconomics', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
 

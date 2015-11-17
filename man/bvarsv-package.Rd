@@ -26,7 +26,7 @@ Fabian Krueger <Fabian.Krueger83@gmail.com>, based on Matlab code by Dimitris Ko
 \references{
 \emph{The code incorporates the recent corrigendum by Del Negro and Primiceri (2015), which points to an error in the original MCMC algorithm of Primiceri (2005).}
 
-Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press.
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies 82, 1342-1345.
 
 Koop, G. and D. Korobilis (2010): `Bayesian Multivariate Time Series Methods for Empirical Macroeconomics', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
 
