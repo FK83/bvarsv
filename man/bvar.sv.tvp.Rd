@@ -8,7 +8,7 @@ Bayesian estimation of the flexible VAR model by Primiceri (2005) which allows f
 }
 \usage{
 bvar.sv.tvp(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep = 50000, 
-nburn = 5000, thinfac = 10, itprint = 10000, save.parameters = FALSE, 
+nburn = 5000, thinfac = 10, itprint = 10000, save.parameters = TRUE, 
 k_B = 4, k_A = 4, k_sig = 1, k_Q = 0.01, k_S = 0.1, k_W = 0.01, 
 pQ = NULL, pW = NULL, pS = NULL)
 }
@@ -22,7 +22,7 @@ pQ = NULL, pW = NULL, pS = NULL)
   \item{nburn}{Number of MCMC draws used to initialize the sampler (defaults to 5000). These draws do not enter the computation of posterior moments, forecasts etc.}
    \item{thinfac}{Thinning factor for MCMC output. Defaults to 10, which means that the forecast sequences (\code{fc.mdraws}, \code{fc.vdraws}, \code{fc.ydraws}, see below) contain only every tenth draw of the original sequence. Set \code{thinfac} to one to obtain the full MCMC sequence.}
   \item{itprint}{Print every \code{itprint}-th iteration. Defaults to 10000. Set to very large value to omit printing altogether.}
-  \item{save.parameters}{If set to \code{TRUE}, parameter draws are saved in lists (these can be very large). Defaults to \code{FALSE}.}
+  \item{save.parameters}{If set to \code{TRUE}, parameter draws are saved in lists (these can be very large). Defaults to \code{TRUE}.}
   \item{k_B, k_A, k_sig, k_Q, k_W, k_S, pQ, pW, pS}{Quantities which enter the prior distributions, see the links below for details. Defaults to the exact values used in the original article by Primiceri.}
 }
 \value{
@@ -32,18 +32,18 @@ pQ = NULL, pW = NULL, pS = NULL)
   \item{fc.mdraws}{Draws for the forecast mean vector at various horizons (three-dimensional array, where the first dimension corresponds to system variables, the second to forecast horizons, and the third to MCMC draws). \emph{Note:} The third dimension will be equal to \code{nrep/thinfac}, apart from possible rounding issues.}
   \item{fc.vdraws}{Draws for the forecast covariance matrix. Design similar to \code{fc.mdraws}, except that the first array dimension contains the lower-diagonal elements of the forecast covariance matrix.}
   \item{fc.ydraws}{Simulated future observations. Design analogous to \code{fc.mdraws}.}
-  \item{Beta.draws, H.draws}{Matrices of parameter draws, can be used for computing impulse responses later on (see \link{impulse.responses}).
-  These outputs are generated only if \code{save.parameters} has been set to \code{TRUE}.}
+  \item{Beta.draws, H.draws}{Matrices of parameter draws, can be used for computing impulse responses later on (see \link{impulse.responses}), and accessed via the helper function \code{\link{parameter.draws}}.
+  These outputs are generated only if \code{save.parameters} has been set to \code{TRUE}. }
 }
 \references{
-Del Negro, M. and G. Primiceri (2014): ``Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum'', working paper, Northwestern University. 
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press. 
 
-Koop, G. and D. Korobilis (2010): ``Bayesian Multivariate Time Series Methods for Empirical Macroeconomics'', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
+Koop, G. and D. Korobilis (2010): `Bayesian Multivariate Time Series Methods for Empirical Macroeconomics', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
 
-Primiceri, G. (2005): ``Time Varying Structural Vector Autoregressions and Monetary Policy'', Review of Economic Studies 72, 821-852.
+Primiceri, G.E. (2005): `Time Varying Structural Vector Autoregressions and Monetary Policy', Review of Economic Studies 72, 821-852.
 }
 \author{
-Fabian Krueger, based on Matlab code by Dimitris Korobilis (see Koop and Korobilis, 2010). \emph{Incorporates the corrigendum by Del Negro and Primiceri (2014), which points to an error in the original MCMC algorithm of Primiceri (2005).}
+Fabian Krueger, based on Matlab code by Dimitris Korobilis (see Koop and Korobilis, 2010). \emph{Incorporates the corrigendum by Del Negro and Primiceri (2015), which points to an error in the original MCMC algorithm of Primiceri (2005).}
 }
 \examples{
 \dontrun{

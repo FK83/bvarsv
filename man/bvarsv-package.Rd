@@ -24,13 +24,13 @@ URL: \tab https://sites.google.com/site/fk83research/code\cr
 Fabian Krueger <Fabian.Krueger83@gmail.com>, based on Matlab code by Dimitris Korobilis (see Koop and Korobilis, 2010).
 }
 \references{
-\emph{The code incorporates the recent corrigendum by Del Negro and Primiceri (2014), which points to an error in the original MCMC algorithm of Primiceri (2005).}
+\emph{The code incorporates the recent corrigendum by Del Negro and Primiceri (2015), which points to an error in the original MCMC algorithm of Primiceri (2005).}
 
-Del Negro, M. and G. Primiceri (2014): ``Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum'', working paper, Northwestern University. 
+Del Negro, M. and Primicerio, G.E. (2015). `Time Varying Structural Vector Autoregressions and Monetary Policy: A Corrigendum', Review of Economic Studies, in press.
 
-Koop, G. and D. Korobilis (2010): ``Bayesian Multivariate Time Series Methods for Empirical Macroeconomics'', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
+Koop, G. and D. Korobilis (2010): `Bayesian Multivariate Time Series Methods for Empirical Macroeconomics', Foundations and Trends in Econometrics 3, 267-358. Accompanying Matlab code available at \url{https://sites.google.com/site/dimitriskorobilis/matlab}.
 
-Primiceri, G. (2005): ``Time Varying Structural Vector Autoregressions and Monetary Policy'', Review of Economic Studies 72, 821-852.
+Primiceri, G.E. (2005): `Time Varying Structural Vector Autoregressions and Monetary Policy', Review of Economic Studies 72, 821-852.
 }
 \keyword{ package }
 

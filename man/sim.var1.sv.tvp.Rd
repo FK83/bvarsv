@@ -25,7 +25,7 @@ S = NULL, W = NULL, t = 500, init = 1000)
   \item{H}{Array of dimension \eqn{[M, M, t]}. Submatrix \eqn{[,,l]} holds the error term covariance matrix for period \eqn{l}.}
 }
 \references{
-Primiceri, G. (2005): ``Time Varying Structural Vector Autoregressions and Monetary Policy'', Review of Economic Studies 72, 821-852.
+Primiceri, G.E. (2005): `Time Varying Structural Vector Autoregressions and Monetary Policy', Review of Economic Studies 72, 821-852.
 }
 \author{
 Fabian Krueger
