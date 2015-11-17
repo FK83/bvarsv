@@ -249,7 +249,7 @@ getmix <- cmpfun(function(){
 ##################################################
 # Estimate Primiceri BVAR with SV and TVP 
 ##################################################
-bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep = 50000, nburn = 5000, thinfac = 10, itprint = 10000, save.parameters = FALSE, k_B = 4, k_A = 4, k_sig = 1, k_Q = 0.01, k_S = 0.1, k_W = 0.01, pQ = NULL, pW = NULL, pS = NULL){
+bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep = 50000, nburn = 5000, thinfac = 10, itprint = 10000, save.parameters = TRUE, k_B = 4, k_A = 4, k_sig = 1, k_Q = 0.01, k_S = 0.1, k_W = 0.01, pQ = NULL, pW = NULL, pS = NULL){
 
   # Input checks
 
@@ -354,7 +354,7 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   if (save.parameters == TRUE){
     # arrays for parameter draws
     Bt.alldraws <- array(0, c(K,t,nrep2))
-    Ht.alldraws <- array(0, c(M,M*t,nrep2))
+    Ht.alldraws <- Sigt.alldraws <- At.alldraws <- array(0, c(M,M*t,nrep2))
   } else {
     Bt.alldraws <- Ht.alldraws <- NULL
   }
@@ -382,7 +382,7 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   
   # Gibbs sampler
   
-  prints <- seq(from=0,to=(nrep+nburn),by=itprint)
+  prints <- seq(from=nburn,to=(nrep+nburn),by=itprint)
   print(paste(Sys.time(),"-- now starting MCMC"))
   
   # auxiliary counter for saved draws
@@ -507,6 +507,8 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
 	
 	    Bt.alldraws[,,aux.ct] <- Btdraw
 		Ht.alldraws[,,aux.ct] <- t(Ht)
+		Sigt.alldraws[,,aux.ct] <- Sigtdraw
+		At.alldraws[,,aux.ct] <- t(capAt)
 	  
 	  }
       
@@ -538,7 +540,8 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   
   # Return list of outputs
   
-  return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m, fc.vdraws = fc.v, fc.ydraws = fc.y, Beta.draws = Bt.alldraws, H.draws = Ht.alldraws, M = M, p = p))
+  return(list(Beta.postmean = beta.out, H.postmean = h.out, Q.postmean = Qmean, S.postmean = Smean, W.postmean = Wmean, fc.mdraws = fc.m, fc.vdraws = fc.v, fc.ydraws = fc.y, Beta.draws = Bt.alldraws, 
+              H.draws = Ht.alldraws, logs2.draws = Sigt.alldraws, A.draws = At.alldraws, M = M, p = p))
   
 })
 
@@ -584,6 +587,57 @@ predictive.draws <- cmpfun(function(fit, v = 1, h = 1){
   return(list(y = y, m = m, v = v))  
 })
 
+parameter.draws <- cmpfun(function(fit, type = "lag1", row = 1, col = 1){
+  # Input checks
+  if (is.null(fit$Beta.draws)) stop("Parameter draws in fit have not been saved -- please run again, using the option `save.parameters = TRUE'.")
+  nms <- c("intercept", paste0("lag", 1:fit$p), "vcv")
+  if (!type %in% nms) stop(paste("Type unknown -- please enter one of the following:", paste(nms, collapse = "; ")))
+  if (type == "intercept"){
+    if (!row %in% 1:fit$M) stop(paste("Invalid row selected -- please enter one of the following:", paste(1:fit$M, collapse = "; ")))
+  } else if (type %in% c(paste0("lag", 1:fit$p), "vcv")){
+	if (!row %in% 1:fit$M | !col %in% 1:fit$M) stop(paste("Invalid row or col selected -- please enter one of the following:", paste(1:fit$M, collapse = "; ")))
+  }
+  
+  # Intermediate stuff
+  Beta.draws <- fit$Beta.draws  
+  t <- dim(Beta.draws)[2]
+  
+  # Get parameters 
+  if (type == "vcv"){
+    aux.seq <- seq(from = col, by = fit$M, length.out = t)
+    out <- t(fit$H.draws[row, aux.seq, ])
+  } else {
+    if (type == "intercept"){
+	  # Parameter output
+	  out <- t(Beta.draws[row, , ])
+	  # Needed for checking below
+      aux.col <- 1
+	} else if (type %in% paste0("lag", 1:fit$p)){
+	  # Lag order
+	  lo <- as.numeric(substr(type, 4, nchar(type)))
+	  # Find position in storage output
+	  ind <- fit$M + (lo - 1)*(fit$M^2) + (row - 1)*fit$M + col
+	  # Get draws
+	  out <- t(Beta.draws[ind, , ])
+	  # Needed for checking below
+	  aux.col <- 1 + (lo-1)*fit$M + col
+	}
+    # Check (compare to slower beta.reshape function, for one randomly chosen MCMC draw and time period)
+	aux.ind <- sample.int(dim(Beta.draws)[3], 1)
+	aux.t <- sample.int(dim(Beta.draws)[2], 1)
+	if (out[aux.ind, aux.t] != beta.reshape(Beta.draws[, aux.t, aux.ind], fit$M, fit$p)[row, aux.col]) stop("Wrong output...") 
+  }
+  # Message
+  if (type == "intercept"){
+    message(paste("Element", row, "of intercept vector. Format: MCMC draws in rows, time in columns."))
+  } else {
+    message(paste0("Element [", row, ",", col, "] of ", type, " matrix. Format: MCMC draws in rows, time in columns."))
+  }
+  return(out)
+})
+
+
+
 ARtoMA <- cmpfun(function(A, nhor){
   # Infer dimensions from A parameters
   M <- nrow(A)
@@ -617,16 +671,13 @@ matmult <- cmpfun(function(mat, mult){
   return(out)
 })
 
-IRFmats <- cmpfun(function(A, H, nhor, orthogonal = TRUE){
+IRFmats <- cmpfun(function(A, H.chol = NULL, nhor, orthogonal = TRUE){
   # Dimensions
   M <- nrow(A) # nr of variables
   
   # AR matrices
   p <- ncol(A)/M
-  
-  # Cholesky of H
-  cH <- t(chol(H))
-    
+      
   # Construct companion form matrices
   
   if (p > 1){
@@ -646,25 +697,52 @@ IRFmats <- cmpfun(function(A, H, nhor, orthogonal = TRUE){
   Phi <- matrix(0, M, M*(nhor+1)) 
   for (s in 0:nhor){
     aux <- matmult(Ac, s)[1:M, 1:M] 
-	if (orthogonal == TRUE) aux <- aux %*% cH
+	if (!is.null(H.chol)) aux <- aux %*% H.chol
 	Phi[,(s*M+1):((s+1)*M)] <- aux
   } 
   Phi
   
 })
 
-impulse.responses <- cmpfun(function(fit, impulse.variable = 1, response.variable = 2, t = NULL, nhor = 20, orthogonal = TRUE, draw.plot = TRUE){
+impulse.responses <- cmpfun(function(fit, impulse.variable = 1, response.variable = 2, t = NULL, nhor = 20, scenario = 2, draw.plot = TRUE){
+
   # Get coefficient draws from fit
   Beta.draws <- fit$Beta.draws
-  H.draws <- fit$H.draws
   nd <- dim(Beta.draws)[3]
   if (is.null(t)) t <- dim(Beta.draws)[2]
   out <- matrix(0, nd, nhor + 1)
   M <- fit$M
   p <- fit$p
+  
+  # Get relevant stuff for VCV matrix
+  H.sel <- fit$H.draws[,((t-1)*M+1):(t*M),]
+  A.sel <- fit$A.draws[,((t-1)*M+1):(t*M),]
+  
+  if (scenario == 3){
+    # Compute mean of sigma (over both time and MCMC draws, as in Primiceri's code)
+    sig <- apply(exp(0.5*fit$logs2.draws), 1, mean)
+    sig <- diag(sig)   
+  } else {
+    sig <- NULL
+  }
+    
+  # Compute IR for each MC iteration
   for (j in 1:nd){
-	aux <- IRFmats(A = beta.reshape(Beta.draws[,t,j], M, p)[,-1], H = H.draws[,((t-1)*M+1):(t*M),j], nhor = nhor, orthogonal = orthogonal)
-	out[j,] <- aux[response.variable, seq(from = impulse.variable, by = M, length = nhor + 1)]  	 
+  
+    # Cholesky of VCV matrix, depending on specification
+    if (scenario == 1){ # No orthogonalization at all
+	  H.chol <- NULL
+	} else if (scenario == 2){ # Standard orthogonalization
+	  H.chol <- t(chol(H.sel[,,j]))
+	} else if (scenario == 3){ # Orthogonalization as in Primiceri
+	  H.chol <- t(solve(A.sel[,,j])) %*% sig
+	}
+
+	# Compute Impulse Responses
+    aux <- IRFmats(A = beta.reshape(Beta.draws[,t,j], M, p)[,-1], H.chol = H.chol, nhor = nhor)
+	aux <- aux[response.variable, seq(from = impulse.variable, by = M, length = nhor + 1)]  	
+	
+  	out[j,] <- aux
   }
   # Make plot
   if (draw.plot){
