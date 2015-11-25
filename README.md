@@ -6,7 +6,7 @@ R package for Bayesian analysis of the Primiceri (2005) model. See the R documen
 - First commit: August 18, 2014
 - Version 1.1: April 9, 2015 
 - Update on November 17, 2015 (extended functionality for impulse responses and access to parameter draws)
-- November 25, 2015: Version 1.1 released on CRAN.
+- November 25, 2015: Version 1.1 released on CRAN
 
 The (stable version of the) package is on CRAN (<https://cran.r-project.org/web/packages/bvarsv/index.html>). 
 
