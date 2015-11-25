@@ -643,7 +643,7 @@ ARtoMA <- cmpfun(function(A, nhor){
   M <- nrow(A)
   p <- ncol(A)/M
   Phi <- matrix(0, M, M*nhor) 
-  # See recursive formula in JMulti document, p.28 [find Lütkepohl ref!]
+  # See recursive formula for MA (see e.g. page 28 in http://www.jmulti.de/download/help/var.pdf)
   for (s in 1:nhor){
     tmp <- matrix(0, M, M)
 	for (j in 1:s){
