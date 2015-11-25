@@ -6,7 +6,7 @@
 Bayesian Analysis of a Vector Autoregressive Model with Stochastic Volatility and Time-Varying Parameters
 }
 \description{
-R/C++ implementation of the Primiceri (2005) model, which allows for both stochastic volatility and time-varying regression parameters. This is a very flexible framework which nests several other models as special cases. The package contains functions for computing posterior predictive distributions from the model, based on an input data set. 
+R/C++ implementation of the Primiceri (2005) model, which allows for both stochastic volatility and time-varying regression parameters. The package contains functions for computing posterior predictive distributions and impulse responses from the model, based on an input data set. 
 }
 \details{
 \tabular{ll}{
