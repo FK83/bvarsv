@@ -5,7 +5,8 @@ Version: 1.1
 Date: 2015-10-29
 Author: Fabian Krueger
 Maintainer: Fabian Krueger <Fabian.Krueger83@gmail.com>
-Description: R/C++ implementation of the model proposed by Primiceri ("Time Varying Structural Vector Autoregressions and Monetary Policy", Review of Economic Studies, 2005), with a focus on generating posterior predictive distributions.
+Description: R/C++ implementation of the model proposed by Primiceri ("Time Varying Structural Vector Autoregressions and Monetary Policy", Review of Economic Studies, 2005), with functionality for 
+computing posterior predictive distributions and impulse responses.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.0)
 LinkingTo: Rcpp, RcppArmadillo
