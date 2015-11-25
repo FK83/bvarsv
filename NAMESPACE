@@ -1,4 +1,6 @@
 useDynLib(bvarsv)
 importFrom(compiler, cmpfun)
+importFrom("graphics", "abline", "lines", "matplot", "polygon")
+importFrom("stats", "dnorm", "pnorm", "quantile", "rWishart", "rnorm")
 importFrom(Rcpp, evalCpp)
 export(bvar.sv.tvp, sim.var1.sv.tvp, predictive.density, predictive.draws, impulse.responses, parameter.draws)
