@@ -59,6 +59,8 @@ If \code{scenario} is set to either \code{2} or \code{3}, the Cholesky transform
 If \code{scenario = 1}, the function simply outputs the matrices of the model's moving average representation, see Equation [11.4.1] in 
 Hamilton (1994). The scenario considered here may be unrealistic, in that an isolated shock may be unlikely. The magnitude of the shock (impulse)
 corresponds to one unit of the error term.
+
+Further supporting information is available at \url{https://sites.google.com/site/FK83research/code}.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
