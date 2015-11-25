@@ -1,3 +1,8 @@
+# Compiled stuff
+*.o
+/src-i386/
+/src-x86_64/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -34,3 +39,4 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+.Rproj.user
