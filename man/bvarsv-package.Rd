@@ -12,8 +12,8 @@ R/C++ implementation of the Primiceri (2005) model, which allows for both stocha
 \tabular{ll}{
 Package: \tab bvarsv\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2014-08-14\cr
+Version: \tab 1.1\cr
+Date: \tab 2015-11-25\cr
 License: \tab GPL (>= 2)\cr
 URL: \tab https://sites.google.com/site/fk83research/code\cr
 }
