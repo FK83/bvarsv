@@ -57,8 +57,9 @@ bv <- bvar.sv.tvp(usmacro)
 
 }
 }
-\seealso{The helper functions \code{\link{predictive.density}} and \code{\link{predictive.draws}} provide simple access to the forecast distribution produced by \code{\link{bvar.sv.tvp}}. 
-Impulse responses can be computed using \link{impulse.responses}. For detailed examples and explanations, see the accompanying pdf file hosted at \url{https://sites.google.com/site/fk83research/code}.}
+\seealso{The helper functions \code{\link{predictive.density}} and \code{\link{predictive.draws}} provide simple access to the parameters and forecasts produced by \code{\link{bvar.sv.tvp}}. Impulse responses can be computed using \link{impulse.responses}. For detailed examples and explanations, see the accompanying pdf file hosted at \url{https://sites.google.com/site/fk83research/code}.
+
+\emph{Note on priors}: The default values closely follow Primiceri (2005). They have been found to yield reasonable results in several macroeconomic applications, using data sets similar to \code{\link{usmacro}} and \code{\link{usmacro.update}}. However, some of the priors may be implausible in other contexts, especially when the scale of the data is very different from the data sets just mentioned. As is generally the case in Bayesian statistics, the appropriateness of the priors must thus be closely monitored in applications.}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{forecasting methods}
