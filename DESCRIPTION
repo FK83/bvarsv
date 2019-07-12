@@ -10,3 +10,4 @@ License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.0)
 LinkingTo: Rcpp, RcppArmadillo
 URL: https://sites.google.com/site/fk83research/code
+RoxygenNote: 6.0.1
