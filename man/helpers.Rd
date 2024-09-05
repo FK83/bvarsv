@@ -63,6 +63,6 @@ lines(density(smp), col = "green")
 
 }
 }
-\seealso{For examples and background, see the accompanying pdf file hosted at \url{https://sites.google.com/site/fk83research/code}.}
+\seealso{For examples and background, see the accompanying pdf files hosted at \url{https://github.com/FK83/bvarsv/}.}
 
 \keyword{helpers}

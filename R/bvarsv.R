@@ -354,7 +354,8 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
   if (save.parameters == TRUE){
     # arrays for parameter draws
     Bt.alldraws <- array(0, c(K,t,nrep2))
-    Ht.alldraws <- Sigt.alldraws <- At.alldraws <- array(0, c(M,M*t,nrep2))
+    Ht.alldraws <- At.alldraws <- array(0, c(M,M*t,nrep2))
+    Sigt.alldraws <- array(0, c(M, t, nrep2))
   } else {
     Bt.alldraws <- Ht.alldraws <- NULL
   }

@@ -60,7 +60,7 @@ If \code{scenario = 1}, the function simply outputs the matrices of the model's 
 Hamilton (1994). The scenario considered here may be unrealistic, in that an isolated shock may be unlikely. The magnitude of the shock (impulse)
 corresponds to one unit of the error term.
 
-Further supporting information is available at \url{https://sites.google.com/site/FK83research/code}.
+Further supporting information is available in the pdf files at \url{https://github.com/FK83/bvarsv/}.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
