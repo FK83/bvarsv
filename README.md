@@ -1,10 +1,11 @@
 bvarsv
 ======
 
-R package for Bayesian analysis of the Primiceri (2005) model. See the R documentation files (folder `man') and the supporting documents on <https://sites.google.com/site/fk83research/code> for details. 
+R package for Bayesian analysis of the Primiceri (2005) model. See the R documentation files (accessible from within the package, e.g. via `?bvar.sv.tvp`) and the supporting documents posted above (*bvarsv_Nov2015_website.pdf* and *bvarsv_replication.pdf*) for details. 
 
 - August 2014: Version 1.0 
 - November 2015: Version 1.1 (extended functionality for impulse responses and access to parameter draws)
+- September 2024: Minor technical update in response to CRAN notes
 
 The (stable version of the) package is on CRAN: <https://cran.r-project.org/web/packages/bvarsv/index.html> 
 
