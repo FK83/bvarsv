@@ -357,7 +357,7 @@ bvar.sv.tvp <- cmpfun(function(Y, p = 1, tau = 40, nf = 10, pdrift = TRUE, nrep 
     Ht.alldraws <- At.alldraws <- array(0, c(M,M*t,nrep2))
     Sigt.alldraws <- array(0, c(M, t, nrep2))
   } else {
-    Bt.alldraws <- Ht.alldraws <- NULL
+    At.alldraws <- Sigt.alldraws <- Bt.alldraws <- Ht.alldraws <- NULL
   }
   
   # Storage matrices for (running) posterior means
