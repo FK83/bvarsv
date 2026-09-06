@@ -7,7 +7,7 @@ Author: Fabian Krueger
 Maintainer: Fabian Krueger <Fabian.Krueger83@gmail.com>
 Description: R/C++ implementation of the model proposed by Primiceri ("Time Varying Structural Vector Autoregressions and Monetary Policy", Review of Economic Studies, 2005), with functionality for computing posterior predictive distributions and impulse responses.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.0)
+Imports: Rcpp (>= 0.11.0), compiler, graphics, stats
 LinkingTo: Rcpp, RcppArmadillo
 URL: https://github.com/FK83/bvarsv/
 RoxygenNote: 7.3.2
